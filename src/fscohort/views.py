@@ -15,7 +15,7 @@ def home_view(request):
         'dict_1': {'djang': 'best framework'},
         'my_list': [2, 3, 4, 5],
         'cat': 'maviş',
-        'form': form
+        'student': form
     }
     return render(request, "fscohort/home.html", my_context)
 
