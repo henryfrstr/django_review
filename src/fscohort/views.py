@@ -63,6 +63,7 @@ def student_delete(request, id):
 
     return render(request, "fscohort/student_delete.html")
 
+<<<<<<< HEAD
 
 def student_update(request, id):
     student = Student.objects.get(id=id)
@@ -77,3 +78,18 @@ def student_update(request, id):
         'form': form
     }
     return render(request, "fscohort/student_update.html", context)
+=======
+def student_update(request,id):
+    student = get_object_or_404(Student, id = id)
+    form = StudentForm(instance=student)
+    if request.method == 'POST':
+         form = StudentForm(request.POST, instance=student)
+         if form.is_valid():
+            form.save()
+            return redirect("list")
+    context ={
+         'student':student,
+         'form':form   
+    }
+    return render(request,'fscohort/student_update.html',context)
+>>>>>>> 4759febfb8c689770388e7eed9e17cbb109e7f02
