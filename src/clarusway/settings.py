@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'fscohort',
     'fscohort_api',
     # 'fscohort.apps.FscohortConfig'
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
