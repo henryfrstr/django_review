@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializers import StudentSerializer
+from rest_framework import status
 
 
 def home_api(request):
@@ -87,3 +88,10 @@ def student_list_create_api(request):
 
     elif request.method == "POST":
         serializer = StudentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            data = {
+                "message": "Student cerated succesfully"
+            }
+            return Response(data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
