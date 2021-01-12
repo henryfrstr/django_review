@@ -93,7 +93,7 @@ def student_list_create_api(request):
             # student = form.save(commit=False)
             # student.teacher = request.user
             # student.save()
-            # serializer.save(teacher=request.user)
+            serializer.save()
             data = {
                 "message": "Student cerated succesfully"
             }
