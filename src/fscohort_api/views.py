@@ -146,7 +146,7 @@ class StudentGetUpdateDelete(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
     def get(self, request, id):
-        # student = self.get_object(id)
+        student = self.get_object(id)
         # student = get_object_or_404(Student, id=id)
         serializer = StudentSerializer(student)
         return Response(serializer.data)
