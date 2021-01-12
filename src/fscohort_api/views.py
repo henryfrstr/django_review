@@ -1,9 +1,10 @@
 from django.core import serializers
 from django.shortcuts import get_object_or_404, render
-from django.http import JsonResponse
+from django.http import JsonResponse, request
 from django.core.serializers import serialize
 import json
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.views import APIView
 from fscohort.models import Student
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -80,42 +81,88 @@ def home_api(request):
 #         return JsonResponse(data, status=201)
 
 
-@api_view(["GET", "POST"])
-def student_list_create_api(request):
-    if request.method == "GET":
+# @api_view(["GET", "POST"])
+# def student_list_create_api(request):
+#     if request.method == "GET":
+#         students = Student.objects.all()
+#         serializer = StudentSerializer(students, many=True)
+#         return Response(serializer.data)
+
+#     elif request.method == "POST":
+#         serializer = StudentSerializer(data=request.data)
+#         if serializer.is_valid():
+#             # student = form.save(commit=False)
+#             # student.teacher = request.user
+#             # student.save()
+#             serializer.save()
+#             data = {
+#                 "message": "Student cerated succesfully"
+#             }
+#             return Response(data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# @api_view(["GET", "PUT", "DELETE"])
+# def student_get_update_delete(request, id):
+#     student = get_object_or_404(Student, id=id)
+#     if request.method == "GET":
+#         serializer = StudentSerializer(student)
+#         return Response(serializer.data)
+#     if request.method == "PUT":
+#         serializer = StudentSerializer(student, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             data = {
+#                 "message": "Student updated succesfully!"
+#             }
+#             return Response(data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#     if request.method == "DELETE":
+#         student.delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class StudentList(APIView):
+
+    def get(self, request):
         students = Student.objects.all()
         serializer = StudentSerializer(students, many=True)
         return Response(serializer.data)
 
-    elif request.method == "POST":
+    def post(self, request):
         serializer = StudentSerializer(data=request.data)
         if serializer.is_valid():
-            # student = form.save(commit=False)
-            # student.teacher = request.user
-            # student.save()
             serializer.save()
-            data = {
-                "message": "Student cerated succesfully"
-            }
-            return Response(data, status=status.HTTP_201_CREATED)
+            return Response(serialize.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(["GET", "PUT", "DELETE"])
-def student_get_update_delete(request, id):
-    student = get_object_or_404(Student, id=id)
-    if request.method == "GET":
+class StudentGetUpdateDelete(APIView):
+
+    def get_object(self, id):
+        try:
+            return Student.objects.get(id=id)
+        except Student.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def get(self, request, id):
+        # student = self.get_object(id)
+        # student = get_object_or_404(Student, id=id)
         serializer = StudentSerializer(student)
         return Response(serializer.data)
-    if request.method == "PUT":
+
+    def put(self, request, id):
+        student = self.get_object(id)
         serializer = StudentSerializer(student, data=request.data)
         if serializer.is_valid():
             serializer.save()
             data = {
-                "message": "Student updated succesfully!"
+                "message": "Student updatet"
             }
             return Response(data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    if request.method == "DELETE":
+
+    def delete(self, request, id):
+        student = self.get_object(id)
         student.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
