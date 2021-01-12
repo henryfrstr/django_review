@@ -11,6 +11,7 @@ from rest_framework.decorators import api_view
 from .serializers import StudentSerializer
 from rest_framework import status
 from rest_framework import generics
+from rest_framework import mixins
 
 
 def home_api(request):
@@ -169,12 +170,34 @@ def home_api(request):
 #         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class StudentList(generics.ListCreateAPIView):
-    serializer_class = StudentSerializer
-    queryset = Student.objects.all()
+# class StudentList(generics.ListCreateAPIView):
+#     serializer_class = StudentSerializer
+#     queryset = Student.objects.all()
 
 
-class StudentGetUpdateDelete(generics.RetrieveUpdateDestroyAPIView):
+# class StudentGetUpdateDelete(generics.RetrieveUpdateDestroyAPIView):
+#     serializer_class = StudentSerializer
+#     queryset = Student.objects.all()
+#     lookup_field = "id"
+
+
+class Student(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, mixins.RetrieveModelMixin):
+
     serializer_class = StudentSerializer
     queryset = Student.objects.all()
     lookup_field = "id"
+
+    def get(self, request, id=None):
+        if id:
+            return self.retrieve(request)
+        else:
+            return self.list(request)
+
+    def post(self, request):
+        return self.create(request)
+
+    def put(self, request, id=None):
+        return self.update(request, id)
+
+    def delete(self, request, id):
+        return self.destroy(request, id)
